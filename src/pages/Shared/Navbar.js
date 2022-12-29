@@ -1,9 +1,17 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../contexts/AuthProvider';
 
 const Navbar = () => {
  
-		    const [navbar, setNavbar] = useState(false);
+	const [navbar, setNavbar] = useState(false);
+		const { user, logOut } = useContext(AuthContext);
+		const handleLogOut = () => {
+		logOut()
+			.then(() => {
+		})
+		.catch((err) => console.log(err));
+	};
 
     return (
 			<nav className="w-full bg-white shadow">
@@ -63,6 +71,15 @@ const Navbar = () => {
 								<li className="text-gray-600 hover:text-blue-600">
 									<Link to="/about">About</Link>
 								</li>
+								{user?.uid ? (
+										<li>
+											<button onClick={handleLogOut}>Sign out</button>
+										</li>
+								) : (
+									<li>
+										<Link to="/login">Login</Link>
+									</li>
+								)}
 							</ul>
 						</div>
 					</div>
