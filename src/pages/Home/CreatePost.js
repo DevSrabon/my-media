@@ -1,24 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-hot-toast';
+import { AuthContext } from '../../contexts/AuthProvider';
 
 const CreatePost = () => {
- const {
+	const { user } = useContext(AuthContext);
+
+	console.log(user);
+	const {
 		register,
 		reset,
 		formState: { errors },
 		handleSubmit,
- } = useForm();
+	} = useForm();
 
- const imageHostKey = process.env.REACT_APP_imgbb_key;
+	const imageHostKey = process.env.REACT_APP_imgbb_key;
 
+	const date = new Date();
 
- const date = new Date();
-
-
-
-
- const handleAddPost = (data) => {
+	const handleAddPost = (data) => {
 		const image = data.img[0];
 		console.log(image);
 		const formData = new FormData();
@@ -31,29 +31,32 @@ const CreatePost = () => {
 			.then((res) => res.json())
 			.then((imgData) => {
 				if (imgData.success) {
-					const post = {
-						description: data.description,
-						image: imgData.data.url,
-						date,
-					};
+					
 					// save post information into the database
 					fetch(`${process.env.REACT_APP_API_URL}/post`, {
 						method: "POST",
 						headers: {
 							"content-type": "application/json",
 						},
-						body: JSON.stringify(post),
+						body: JSON.stringify({
+							description: data.description,
+							image: imgData.data.url,
+							date,
+							userEmail: user.email,
+							displayName: user.displayName,
+							photoURL: user.photoURL,
+						}),
 					})
 						.then((res) => res.json())
 						.then((result) => {
-							console.log(result);
-							toast.success(`${data.brand} is added successfully`);
+								toast.success("Post success");
+
 							reset();
 						});
 				}
 			});
- };
- return (
+	};
+	return (
 		<div className="w-full mx-auto p-7 my-10 shadow-2xl rounded-lg">
 			<h3 className="text-3xl font-semibold mb-5  text-center text-slate-400">
 				{" "}
@@ -79,7 +82,7 @@ const CreatePost = () => {
 						<span className="label-text">Photo</span>
 					</label>
 					<input
-						className="input input-bordered max-w-xs"
+						className="file-input file-input-bordered w-full max-w-xs"
 						type="file"
 						{...register("img", {
 							required: "Photo is required",
@@ -94,7 +97,7 @@ const CreatePost = () => {
 				/>
 			</form>
 		</div>
- );
+	);
 };
 
 export default CreatePost;

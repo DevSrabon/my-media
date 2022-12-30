@@ -18,31 +18,34 @@ const SignUp = () => {
 
 	const [signUError, setSignUpError] = useState(true);
 	const handleSignUp = (data) => {
+
 		console.log(data);
 		setSignUpError("");
-		createUser(data.email, data.password)
+		
+		
+		createUser(data.email, data.password, data.photoURL)
 			.then((result) => {
 				const user = result.user;
 				console.log(user);
 				toast("User Created Successfully");
 				const userInfo = {
 					displayName: data.name,
+					photoURL: data.photoURL,
 				};
 				updateUser(userInfo)
 					.then(() => {
 						savedUser(data.name, data.email);
 					})
 					.catch((err) => console.error(err));
-				setTimeout(() => {
-				}, 100);
+				setTimeout(() => {}, 100);
 			})
 			.catch((err) => {
 				setSignUpError(err.message);
 			});
 	};
 
-	const savedUser = (name, email) => {
-		const user = { name, email };
+	const savedUser = (name, email, photoURL) => {
+		const user = { name, email, photoURL };
 		fetch(`${process.env.REACT_APP_API_URL}/users`, {
 			method: "POST",
 			headers: {
@@ -113,6 +116,21 @@ const SignUp = () => {
 						/>
 						{errors.password && (
 							<p className="text-red-600">{errors.password?.message}</p>
+						)}
+					</div>
+					<div className="form-control w-full">
+						<label className="label">
+							<span className="label-text">Photo</span>
+						</label>
+						<input
+							className="file-input file-input-bordered w-full max-w-xs"
+							type="text"
+							{...register("photoURL", {
+								required: "Photo is required",
+							})}
+						/>
+						{errors.img && (
+							<p className="text-red-600">{errors.img?.message}</p>
 						)}
 					</div>
 					<input

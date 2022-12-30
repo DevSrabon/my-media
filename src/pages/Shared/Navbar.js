@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthProvider';
+import { BiUserPin } from "react-icons/bi";
 
 const Navbar = () => {
  
@@ -72,12 +73,25 @@ const Navbar = () => {
 									<Link to="/about">About</Link>
 								</li>
 								{user?.uid ? (
-										<li>
-											<button onClick={handleLogOut}>Sign out</button>
-										</li>
+									<li>
+										<button onClick={handleLogOut}>Sign out</button>
+									</li>
 								) : (
 									<li>
 										<Link to="/login">Login</Link>
+									</li>
+								)}
+								{user?.photoURL ? (
+									<li>
+										<img
+											className="rounded-full h-10"
+											src={user?.photoURL}
+											alt=""
+										/>
+									</li>
+								) : (
+									<li>
+										<BiUserPin className="h-8 w-8"></BiUserPin>
 									</li>
 								)}
 							</ul>
